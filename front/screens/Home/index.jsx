@@ -31,11 +31,6 @@ const Home = () => {
 
     }, []);
 
-    useEffect(() => {
-        // FORMAT ARRAY WITH 1 date and 2 workers, every time we get/update it
-
-    }, [supportList]);
-
     const handleInitialList = (data) => {
         setWorkers(data.workers);
         setSupportList(data.support);
@@ -63,13 +58,13 @@ const Home = () => {
         }
 
         fetch(randomEndpoint, data).then(r => r.json()).then(({ data }) => {
-            // Here we reset availability just visually
+            // Reset availability just for frontend
             let visualWorkers = workers.map(item => {
                 item.available = 1;
                 return item;
             });
 
-            // Now if we have 2 new random humans, we will make them unavailable
+            // If we have 2 new random humans, we will make them unavailable
             if (data) {
                 setRandomPicks(data);
                 workers.forEach((item, i) => {
@@ -92,7 +87,6 @@ const Home = () => {
         // Stop here if we didn't randomly choose 2 workers
         if (!randomPicks.length || loading || !canSave) return false;
 
-        
         setLoading(true); // Start loading / Avoid spam
 
         let rows = [];
@@ -103,7 +97,6 @@ const Home = () => {
                 status: 1,
             };
             rows.push(row);
-            row = null;
         });
 
         let data = {
@@ -120,11 +113,12 @@ const Home = () => {
 
         }).finally(() => {
             setLoading(false);
-            setCanSave(false); // Disable Save Button
+            setCanSave(false);
             setSupportDay(getNextDayNoWeekend(supportDay, 1));
         });
     }
 
+    // A basic loader, not really needed but it's good practice
     if (loading) {
         return <div className="loading">Loading ...</div>
     }
@@ -132,10 +126,6 @@ const Home = () => {
     return(
         <>
             <div className="main-nav">
-                {/* <div className="days-nav">
-                    <button className="btn prev" type="button" onClick={goPrevDay}>Previous Day</button>
-                    <button className="btn next" type="button" onClick={goNextDay}>Next Day</button>
-                </div> */}
                 <h2>Pick 2 Humans for Support Shift on {moment(supportDay).format('dddd Do MMMM')} ({supportDay})</h2>
                 <button className="btn btn-random" type="button" onClick={randomPickHandler}>Random Pick</button>
                 <button 
@@ -169,10 +159,6 @@ const Home = () => {
             <section className="saved-list">
                 {!supportList.length ? 'Press the "Random Pick" button first!' :
                     supportList.map((item, i) => {
-                        // let str = '';
-                        // item.workers.forEach(worker => str += worker.name + ' - ');
-                        // str += item.day;
-
                         return(
                             <div 
                                 key={i} className="pair-row"
