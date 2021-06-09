@@ -4,7 +4,6 @@ import { getNextDayNoWeekend } from '../../../helpers/date';
 import ResetDb from '../../components/Buttons/ResetDb';
 
 let today = getNextDayNoWeekend(moment().format("YYYY-MM-DD"));
-let tmr = moment().add(1, 'days').format("YYYY-MM-DD");
 
 const Home = () => {
     const [workers, setWorkers] = useState([]);
@@ -123,11 +122,13 @@ const Home = () => {
         return <div className="loading">Loading ...</div>
     }
 
+    let friendlyDate = moment(supportDay).format('dddd Do MMMM');
     return(
         <>
             <div className="main-nav">
-                <h2>Pick 2 Humans for Support Shift on {moment(supportDay).format('dddd Do MMMM')} ({supportDay})</h2>
+                <h2>Pick 2 Humans for Support Shift on {friendlyDate} ({supportDay})</h2>
                 <button className="btn btn-random" type="button" onClick={randomPickHandler}>Random Pick</button>
+
                 <button 
                     className={`btn btn-random ${!canSave ? 'disabled' : ''}`} 
                     type="button" 
@@ -157,7 +158,7 @@ const Home = () => {
             </section>
 
             <section className="saved-list">
-                {!supportList.length ? 'Press the "Random Pick" button first!' :
+                {!supportList.length ? 'Press the "Random Pick" then "Save"' :
                     supportList.map((item, i) => {
                         return(
                             <div 

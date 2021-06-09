@@ -3,6 +3,13 @@ import { getNextDayNoWeekend } from "../../helpers/date";
 import { DB } from "../db";
 import { ListAll } from "./ListAll";
 
+/**
+ * Save the new support humans that have been randomly picked
+ * 
+ * @param - ARRAY - includes all shift objects
+ * @param - STRING - day of support, not used anymore, probably will remove it
+ * @return - OBJECT - same result as ListAll action
+ */
 export const SaveSupport = async (rows, supportDay) => {
     if (!rows || !rows.length) return null;
     let ids = rows && rows.map(item => item.worker_id);
@@ -29,13 +36,26 @@ export const SaveSupport = async (rows, supportDay) => {
         insertValues += i < rows.length - 1 ? ', ' : ';';
     })
 
+    // Here we would need to actually UPDATE all shifts to status 0
+    // where available_on is less or equal to today. Otherwise we hit a cap when all have 2 shifts
+    // !!! NOT-IMPLEMENTED YET
+
+    // Save hummans for support on day X
     await DbSaveHumans(rows, insertValues);
     return await ListAll();
 }
 
+/**
+ * If one human must have 2 shifts total in 2 weeks
+ * we would have 2 days for support and another 8 free
+ * so we'll just add 8 business days
+ * 
+ * @param - STRING - first support day which we from 'DbCheckShifts'
+ *          for 2 humans, the ones we're about to set for support shift
+ * @return - STRING - date string
+ */
 const SetMaxTwoWeeks = (firstSupportDay) => {
-    let twoWeeks = momentBiz(firstSupportDay).businessAdd(8).format('YYYY-MM-DD');
-    return twoWeeks;
+    return momentBiz(firstSupportDay).businessAdd(8).format('YYYY-MM-DD');
 }
 
 const DbSaveHumans = (rows, insertValues) => {

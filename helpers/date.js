@@ -3,6 +3,7 @@ import moment from "moment"
 export const getToday = moment().format('YYYY-MM-DD');
 
 export const getNextDayNoWeekend = (day, jumpDays) => {
+    if (!jumpDays) jumpDays = 0;
     let nextDay = moment(day).add(jumpDays, 'days').format('YYYY-MM-DD');
     let weekend = [moment(day).day(6).format('YYYY-MM-DD'), moment(day).day(7).format('YYYY-MM-DD')];
 
@@ -14,6 +15,7 @@ export const getNextDayNoWeekend = (day, jumpDays) => {
 }
 
 export const getPrevDayNoWeekend = (day, jumpDays) => {
+    if (!jumpDays) jumpDays = 0;
     let prevDay = moment(day).subtract(jumpDays, 'days').format('YYYY-MM-DD');
     let weekend = [moment(day).day(6).format('YYYY-MM-DD'), moment(day).day(7).format('YYYY-MM-DD')];
     
