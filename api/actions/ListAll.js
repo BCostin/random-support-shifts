@@ -5,15 +5,18 @@ import { DbListSupport } from './SaveSupport';
 /**
  * Get all engineers
  * 
- * Normally we would do some query here but we already have
- * our 'special' data file
- * 
- * So this api request will just return us the results
+ * @return - OBJECT - return same as DbGetWorkers, acts as wrapper
  */
 export const ListAll = async () => {
     return await DbGetWorkers();
 }
 
+
+/**
+ * 'Model' function to get data from sqlite
+ * 
+ * @return - OBJECT - return object with 3 keys (workers, support, nextSupportDay)
+ */
 export const DbGetWorkers = async () => {
     // Get all saved support first
     let support = await DbListSupport();

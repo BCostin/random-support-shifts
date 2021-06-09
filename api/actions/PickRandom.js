@@ -1,11 +1,9 @@
-import moment from "moment";
-import { getPrevDayNoWeekend, getToday } from "../../helpers/date";
 import { DB } from "../db";
 
 /**
- * Return Random numbers
+ * Return maximum 2 random Engineer IDs
  * 
- * @param - STRING - the support day for which we pick the engineers
+ * @param - STRING - support day for which we pick the engineers
  * @return - ARRAY - a set of max 2 random distinct IDs
  */
 export const PickRandom = async (supportDay) => {
@@ -29,6 +27,14 @@ export const PickRandom = async (supportDay) => {
 }
 
 
+/**
+ * Get available engineers and we also apply some business conditions
+ * - max 2 shifts
+ * - check availability date (which is calculated on 'SaveSupport' action)
+ * 
+ * @param - STRING - support day for which we pick the engineers
+ * @return - ARRAY - a set of max 2 random distinct IDs
+ */
 const DbGetAvailableHumans = (supportDay) => {
     return new Promise((resolve) => {
         let sql = `
@@ -53,26 +59,6 @@ const DbGetAvailableHumans = (supportDay) => {
                     })
                 }
                 resolve(result);
-            });
-        });
-    })
-}
-
-const DbGetShiftsDiff = (ids) => {
-    return new Promise((resolve) => {
-        let sql = `
-            SELECT 
-                s.worker_id,
-                (select count(*) from shifts where worker_id = s.worker_id and status = 1) as totalShifts
-            FROM shifts s
-            WHERE 
-                s.status = 1
-                AND s.worker_id IN (${ids.join(',')});
-        `;
-        
-        DB.serialize(() => {
-            DB.all(sql, (err, rows ) => {
-                resolve(rows);
             });
         });
     })

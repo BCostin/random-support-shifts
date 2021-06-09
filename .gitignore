@@ -1,7 +1,7 @@
-support.db
+/support.db
 
-yarn.lock
-yarn-error.log
+/yarn.lock
+/yarn-error.log
 
 /node_modules
 /build

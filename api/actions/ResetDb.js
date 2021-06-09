@@ -1,6 +1,4 @@
-import moment from "moment";
-import { getNextDayNoWeekend } from "../../helpers/date";
-import { DB, initDatabase } from "../db";
+import { initDatabase } from "../db";
 import { ListAll } from "./ListAll";
 
 /**
@@ -10,12 +8,14 @@ import { ListAll } from "./ListAll";
  * @return - ARRAY - a set of 2 random distinct IDs
  */
 export const StartOver = async () => {
-    let reset = await DbReset();
-    let newRows = await ListAll();
-    return newRows;
+    await DbReset();
+    return await ListAll();
 }
 
-
+/**
+ * Model function to re-create the db
+ * @return - OBJECT - just to return something for now
+ */
 const DbReset = async () => {
     return new Promise((resolve) => {
         let result = initDatabase();
