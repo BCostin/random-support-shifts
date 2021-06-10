@@ -62,7 +62,13 @@ ul {
 }
 
 .saved-list {
+    width: 50%;
+    float: left;
+    padding: 20px;
     font-size: 1.4rem;
+
+    th, td { text-align: center; }
+    td { padding: 5px 10px; }
 }
 
 .btn-random {

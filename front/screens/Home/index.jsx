@@ -159,16 +159,33 @@ const Home = () => {
 
             <section className="saved-list">
                 {!supportList.length ? 'Press the "Random Pick" then "Save"' :
-                    supportList.map((item, i) => {
-                        return(
-                            <div 
-                                key={i} className="pair-row"
-                                data-id={item.worker_id}
-                            >
-                                {item.support_day + ' - ' + item.name + ' - ' + item.available_on}
-                            </div>
-                        );
-                    })
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Support Day</th>
+                                <th>Name</th>
+                                <th>Next Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {supportList.map((item, i) => {
+                                return(
+                                    <tr key={i}>
+                                        <td>
+                                            <div 
+                                                className="pair-row"
+                                                data-id={item.worker_id}
+                                            >
+                                                {item.support_day}
+                                            </div>
+                                        </td>
+                                        <td>{item.name}</td>
+                                        <td>{item.available_on}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 }
             </section>
         </>
