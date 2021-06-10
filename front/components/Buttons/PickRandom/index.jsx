@@ -5,31 +5,44 @@ let PickRandom = (props) => {
 
     const workers = props.workers;
     const supportDay = props.supportDay;
-    const randomEndpoint = `${process.env.API_ENDPOINT}/random`;
     const stateHandler = typeof props.stateHandler == 'function' ? props.stateHandler : null;
 
+    const updateShiftsEndpoint = `${process.env.API_ENDPOINT}/update-shifts`;
+    const randomEndpoint = `${process.env.API_ENDPOINT}/random`;
 
-    const randomPickHandler = () => {
+    const randomPickHandler = async () => {
         if (loading) return false;
 
         setLoading(true);
 
+        let random = await randomPick(workers);
+        if (!random || !random.length) {
+            await updateAvailability();
+            await randomPick(workers);
+        }
+        
+        setLoading(false);
+    }
+
+    const randomPick = async (humans) => {
+        if (!humans) console.warn('Missing humans');
+        
         let data = {
             method: 'POST',
             body: JSON.stringify({ supportDay: supportDay }),
             headers: { 'Content-Type': 'application/json' },
         }
 
-        fetch(randomEndpoint, data).then(r => r.json()).then(({ data }) => {
+        return fetch(randomEndpoint, data).then(r => r.json()).then(({ data }) => {
             // Reset availability just for frontend
-            let visualWorkers = workers.map(item => {
+            let visualWorkers = humans.map(item => {
                 item.available = 1;
                 return item;
             });
 
             // If we have 2 new random humans, we will make them unavailable
             if (data) {
-                workers.forEach((item, i) => {
+                humans.forEach((item, i) => {
                     if (data.indexOf(item.id) !== -1) {
                         visualWorkers[i].available = 0;
                     }
@@ -39,7 +52,30 @@ let PickRandom = (props) => {
                 stateHandler(data, visualWorkers, (data.length ? true : false));
             }
 
-        }).finally(() => setLoading(false));
+            return data;
+
+        }).catch(err => {
+            console.log(`Random Pick Err: ${err}`);
+        });
+    }
+
+    const updateAvailability = async () => {
+        let params = {
+            method: 'POST',
+            body: JSON.stringify({ supportDay: supportDay }),
+            headers: { 'Content-Type': 'application/json' },
+        }
+        
+        return fetch(updateShiftsEndpoint, params).then(r => r.json()).then(({ data }) => {
+            if (data && data.workers) {
+                stateHandler(null, data.workers);
+            }
+            
+            return data;
+
+        }).catch(err => {
+            console.log(`Update Err: ${err}`);
+        });
     }
 
     return(

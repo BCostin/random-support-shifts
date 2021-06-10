@@ -3,6 +3,8 @@ import { ListAll } from '../actions/ListAll';
 import { PickRandom } from '../actions/PickRandom';
 import { StartOver } from '../actions/ResetDb';
 import { SaveSupport } from '../actions/SaveSupport';
+import { UpdateShifts } from '../actions/UpdateShifts';
+
 const router = express.Router();
 
 const myMid = (req, res, next) => {
@@ -53,6 +55,19 @@ router.post('/save', myMid, async (req, res) => {
     try {
         let result = {};
             result.data = await SaveSupport(req.body.rows || null, req.body.supportDay || null);
+            result.status = 1;
+
+        res.status(200).json(result);
+
+    } catch(e) {
+        res.status(500).json(customThrowHandler(e));
+    }
+})
+
+router.post('/update-shifts', myMid, async (req, res) => {
+    try {
+        let result = {};
+            result.data = await UpdateShifts(req.body.supportDay || null) || null;
             result.status = 1;
 
         res.status(200).json(result);

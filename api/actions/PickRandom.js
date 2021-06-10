@@ -1,5 +1,5 @@
-import { getToday } from "../../helpers/date";
-import { DB } from "../db";
+import { DB } from '../db';
+import { subBizDays } from '../../helpers/date';
 
 /**
  * Return maximum 2 random Engineer IDs
@@ -8,37 +8,41 @@ import { DB } from "../db";
  * @return - ARRAY - a set of max 2 random distinct IDs
  */
 export const PickRandom = async (supportDay) => {
-    // Update all shifts that have available on equal or greater than today
-    // let update = await updateShifts(supportDay);
-    // console.log(update);
-
     let availableWorkers = await DbGetAvailableHumans(supportDay);
     if (!availableWorkers || !availableWorkers.length) return [];
-    
+
     // Here we generate 2 indexes with a max value 
     // based on total available workers
-    let generateRand = async (workers) => {
-        let total = workers.length;
-        let randomIds = [];
+    let total = availableWorkers.length;
+    
+    let getIds = (workers, flag) => {
+        let nr = [];
         for (let i = 0; i < total; i = i + 1) {
             let rand = Math.floor(Math.random() * total);
             let randomId = workers[rand].id;
-            if (randomIds.indexOf(randomId) == -1 && randomIds.length < 2) {
-                randomIds.push(randomId);
+            if (nr.indexOf(randomId) == -1 && nr.length < 2) {
+                nr.push(randomId);
             }
     
             rand = null; randomId = null;
         };
 
-        return randomIds;
+        let idOne = nr[0];
+        let shiftOne = availableWorkers.filter(item => item.id === idOne);
+            shiftOne = shiftOne[0] ? shiftOne[0].totalShifts : 0;
+
+        let idTwo = nr[1];
+        let shiftTwo = availableWorkers.filter(item => item.id === idTwo);
+            shiftTwo = shiftTwo[0] ? shiftTwo[0].totalShifts : 0;
+        
+        if (nr.length < 2 || idOne == idTwo || shiftOne != shiftTwo) {
+            return getIds(workers, flag);
+        } else {
+            return nr;
+        }
     }
     
-    let twoIds = [];
-    while (twoIds.length < 2) {
-        twoIds = await generateRand(availableWorkers);
-    }
-    
-    return twoIds;
+    return await getIds(availableWorkers);
 }
 
 
@@ -55,10 +59,18 @@ const DbGetAvailableHumans = (supportDay) => {
         let sql = `
             SELECT 
                 e.id,
-                s.*,
+                e.name,
+                support_day as orig_day,
+                MAX(s.support_day) as support_day,
+                MAX(s.available_on) as available_on,
                 (select count(*) from shifts where worker_id = e.id and status = 1) as totalShifts
             FROM employees e
             LEFT JOIN shifts s ON e.id = s.worker_id
+            GROUP BY e.id
+            HAVING 
+                date(s.support_day) < date("${supportDay}")
+                OR date(s.support_day) = null OR totalShifts < 2 
+            ORDER BY totalShifts DESC
         `;
 
         DB.serialize(() => {
@@ -66,59 +78,16 @@ const DbGetAvailableHumans = (supportDay) => {
                 let result = [];
                 if (rows) {
                     rows.forEach(item => {
-                        if ((item.totalShifts < 2)
-                            && (item.available_on == null || item.available_on <= supportDay)
+                        if ((item.totalShifts < 2 && subBizDays(supportDay, 1) != item.support_day)
+                            && (item.available_on == null || item.available_on <= supportDay || item.support_day < supportDay)
                         ) {
                             result.push(item);
                         }
                     })
                 }
+
                 resolve(result);
             });
         });
     })
-}
-
-const updateShifts = async (supportDay) => {
-    // console.log('supportDay: ', supportDay);
-    let cb = (resolve) => {
-        let sql = `
-            SELECT 
-                rowid,
-                worker_id,
-                max(support_day) as support_day,
-                available_on,
-                COUNT(support_day) as totalShifts
-            FROM shifts 
-            GROUP BY support_day
-            HAVING 
-                date("${supportDay}") >= date(available_on)
-                AND status = 1
-            
-        `;
-
-        DB.serialize(() => {
-            DB.all(sql, async (err, rows ) => {
-                let orIdConds = '';
-                for (let k in rows) {
-                    orIdConds += 'rowid=' + rows[k].rowid;
-                    orIdConds += k == rows.length - 1 ? '' : ' OR ';
-                }
-
-                console.log('ids: ', orIdConds);
-
-                let sqlUpdate = `
-                    UPDATE shifts 
-                    SET 
-                        status = 0 
-                    WHERE 
-                        date("${supportDay}") >= date(available_on)
-                `;
-        
-                resolve(rows);
-            });
-        });
-    }
-
-    return await new Promise(cb);
 }

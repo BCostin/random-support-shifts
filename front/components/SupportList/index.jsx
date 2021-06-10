@@ -1,7 +1,29 @@
 import React from 'react';
 
 let SupportList = (props) => {
-    let supportList = props.data;
+    const formatList = (data) => {
+        if (!data) return [];
+        let format = [];
+        let dates = {};
+        data.forEach(item => {
+            if (!dates[item.support_day]) {
+                dates[item.support_day] = item.name;
+            } else {
+                dates[item.support_day] += ` + ${item.name}`;
+            }
+        })
+        
+        if (dates) {
+            let keys = Object.keys(dates);
+            for (let k in keys) {
+                format.push({ day: keys[k], names: dates[keys[k]]});
+            }
+
+        }
+        return format;
+    }
+
+    const supportList = formatList(props.data);
 
     return(
         <section className="saved-list">
@@ -10,24 +32,15 @@ let SupportList = (props) => {
                     <thead>
                         <tr>
                             <th>Support Day</th>
-                            <th>Name</th>
-                            <th>Next Availability</th>
+                            <th>Real Heroes</th>
                         </tr>
                     </thead>
                     <tbody>
                         {supportList.map((item, i) => {
                             return(
                                 <tr key={i}>
-                                    <td>
-                                        <div 
-                                            className="pair-row"
-                                            data-id={item.worker_id}
-                                        >
-                                            {item.support_day}
-                                        </div>
-                                    </td>
-                                    <td>{item.name}</td>
-                                    <td>{item.available_on}</td>
+                                    <td>{item.day}</td>
+                                    <td>{item.names}</td>
                                 </tr>
                             );
                         })}

@@ -50,8 +50,11 @@ const Home = () => {
 
     const randomPickStateHandler = (data, workers, canSave) => {
         if (data) setRandomPicks(data);
-        if (workers) setWorkers(workers);
-        if (canSave != undefined) setCanSave(canSave);
+        if (canSave != null) setCanSave(canSave);
+        
+        if (workers) {
+            setWorkers(workers);
+        }
     }
 
     const saveRandomWorkers = () => {

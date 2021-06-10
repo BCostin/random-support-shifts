@@ -10,7 +10,6 @@ export const initDatabase = () => {
     dropAll();
     initTables();
     addEmployees();
-    showShifts();
 }
 
 const initTables = () => {
@@ -48,30 +47,4 @@ const addEmployees = () => {
     DB.serialize(() => {
         DB.run(sql);
     })
-}
-
-const showShifts = () => {
-    let sql = `
-        SELECT 
-            s.worker_id as id,
-            s.support_day,
-            s.active_on,
-            (SELECT name FROM employees WHERE id = s.worker_id) as name
-        FROM shifts s
-    `;
-
-    // ADUCEM COUNT DIRECT DIN SELECT SIMPLU
-    
-    // let sql = `
-    //     SELECT e.*, s.*
-    //     FROM employees e
-    //     LEFT JOIN shifts s
-    //         on e.id = s.worker_id
-    // `;
-
-    DB.serialize(() => {
-        DB.all(sql, (err, rows ) => {
-            console.log(rows);
-        });
-    });
 }

@@ -1,5 +1,4 @@
-import momentBiz from 'moment-business-days';
-import { getNextDayNoWeekend } from "../../helpers/date";
+import { addBizDays } from "../../helpers/date";
 import { DB } from "../db";
 import { ListAll } from "./ListAll";
 
@@ -19,12 +18,12 @@ export const SaveSupport = async (rows, supportDay) => {
 
     // Adjust rows to be inserted
     rows.forEach((item, i) => {
-        rows[i].available_on = getNextDayNoWeekend(rows[i].supportDay, 2);
+        rows[i].available_on = addBizDays(rows[i].supportDay, 2);
 
         if (theirShifts && theirShifts.length) {
             for (let k in theirShifts) {
                 if (item.worker_id == theirShifts[k].worker_id) {
-                    rows[i].available_on = SetMaxTwoWeeks(theirShifts[k].support_day);
+                    rows[i].available_on = addBizDays(theirShifts[k].support_day, 10);
                 }
             }
         }
@@ -36,26 +35,9 @@ export const SaveSupport = async (rows, supportDay) => {
         insertValues += i < rows.length - 1 ? ', ' : ';';
     })
 
-    // Here we would need to actually UPDATE all shifts to status 0
-    // where available_on is less or equal to today. Otherwise we hit a cap when all have 2 shifts
-    // !!! NOT-IMPLEMENTED YET
-
     // Save hummans for support on day X
     await DbSaveHumans(rows, insertValues);
     return await ListAll();
-}
-
-/**
- * If one human must have 2 shifts total in 2 weeks
- * we would have 2 days for support and another 8 free
- * so we'll just add 8 business days
- * 
- * @param - STRING - first support day which we from 'DbCheckShifts'
- *          for 2 humans, the ones we're about to set for support shift
- * @return - STRING - date string
- */
-const SetMaxTwoWeeks = (firstSupportDay) => {
-    return momentBiz(firstSupportDay).businessAdd(8).format('YYYY-MM-DD');
 }
 
 const DbSaveHumans = (rows, insertValues) => {
