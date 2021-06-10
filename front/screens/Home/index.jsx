@@ -59,43 +59,6 @@ const Home = () => {
             setCanSave(canSave);
     }
 
-    const randomPickHandler = () => {
-        if (loading) return false;
-
-        setLoading(true);
-
-        let data = {
-            method: 'POST',
-            body: JSON.stringify({ supportDay: supportDay }),
-            headers: { 'Content-Type': 'application/json' },
-        }
-
-        fetch(randomEndpoint, data).then(r => r.json()).then(({ data }) => {
-            // Reset availability just for frontend
-            let visualWorkers = workers.map(item => {
-                item.available = 1;
-                return item;
-            });
-
-            // If we have 2 new random humans, we will make them unavailable
-            if (data) {
-                setRandomPicks(data);
-                workers.forEach((item, i) => {
-                    if (data.indexOf(item.id) !== -1) {
-                        visualWorkers[i].available = 0;
-                    }
-                })
-
-                // Enable Save Button
-                setCanSave(true);
-            }
-
-            // This will allow you to visualize which humans have been picked
-            setWorkers(visualWorkers);
-
-        }).finally(() => setLoading(false));
-    }
-
     const saveRandomWorkers = () => {
         // Stop here if we didn't randomly choose 2 workers
         if (!randomPicks.length || loading || !canSave) return false;
@@ -132,9 +95,9 @@ const Home = () => {
     }
 
     // A basic loader, not really needed but it's good practice
-    if (loading) {
-        return <div className="loading">Loading ...</div>
-    }
+    // if (loading) {
+    //     return <div className="loading">Loading ...</div>
+    // }
 
     let friendlyDate = moment(supportDay).format('dddd Do MMMM');
     return(
