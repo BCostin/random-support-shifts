@@ -4,6 +4,7 @@ import { getNextDayNoWeekend } from '../../../helpers/date';
 import ResetDb from '../../components/Buttons/ResetDb';
 import SupportList from '../../components/SupportList';
 import WorkersList from '../../components/WorkersList';
+import PickRandom from '../../components/Buttons/PickRandom';
 
 let today = getNextDayNoWeekend(moment().format("YYYY-MM-DD"));
 
@@ -45,6 +46,17 @@ const Home = () => {
         handleInitialList(data);
         setSupportDay(today);
         setSupportList([]);
+    }
+
+    const randomPickStateHandler = (data, workers, canSave) => {
+        if (data)
+            setRandomPicks(data);
+        
+        if (workers)
+            setWorkers(workers);
+        
+        if (canSave)
+            setCanSave(canSave);
     }
 
     const randomPickHandler = () => {
@@ -129,7 +141,11 @@ const Home = () => {
         <>
             <div className="main-nav">
                 <h2>Pick 2 Humans for Support Shift on {friendlyDate} ({supportDay})</h2>
-                <button className="btn btn-random" type="button" onClick={randomPickHandler}>Random Pick</button>
+
+                <PickRandom 
+                    workers={workers} 
+                    stateHandler={randomPickStateHandler}
+                />
 
                 <button 
                     className={`btn btn-random ${!canSave ? 'disabled' : ''}`} 
