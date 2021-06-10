@@ -13,6 +13,7 @@ export const PickRandom = async (supportDay) => {
     // console.log(update);
 
     let availableWorkers = await DbGetAvailableHumans(supportDay);
+    if (!availableWorkers || !availableWorkers.length) return [];
     
     // Here we generate 2 indexes with a max value 
     // based on total available workers
@@ -26,7 +27,7 @@ export const PickRandom = async (supportDay) => {
                 randomIds.push(randomId);
             }
     
-            rand = null;
+            rand = null; randomId = null;
         };
 
         return randomIds;
@@ -79,7 +80,7 @@ const DbGetAvailableHumans = (supportDay) => {
 }
 
 const updateShifts = async (supportDay) => {
-    console.log('supportDay: ', supportDay);
+    // console.log('supportDay: ', supportDay);
     let cb = (resolve) => {
         let sql = `
             SELECT 

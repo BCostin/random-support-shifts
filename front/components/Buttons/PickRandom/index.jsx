@@ -36,7 +36,7 @@ let PickRandom = (props) => {
                 })
                 
                 // This will allow you to visualize which humans have been picked
-                stateHandler(data, visualWorkers, true);
+                stateHandler(data, visualWorkers, (data.length ? true : false));
             }
 
         }).finally(() => setLoading(false));
