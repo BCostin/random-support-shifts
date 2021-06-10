@@ -77,6 +77,16 @@ const DbGetAvailableHumans = (supportDay) => {
             DB.all(sql, async (err, rows ) => {
                 let result = [];
                 if (rows) {
+                    let shiftsZero = rows.filter(item => item.totalShifts == 0);
+                    let shiftsOne = rows.filter(item => item.totalShifts == 1);
+                    if (shiftsZero.length) {
+                        rows = shiftsZero;
+                    } else {
+                        if (shiftsOne.length) {
+                            rows = shiftsOne;
+                        }
+                    }
+                    
                     rows.forEach(item => {
                         if ((item.totalShifts < 2 && subBizDays(supportDay, 1) != item.support_day)
                             && (item.available_on == null || item.available_on <= supportDay || item.support_day < supportDay)
@@ -85,7 +95,7 @@ const DbGetAvailableHumans = (supportDay) => {
                         }
                     })
                 }
-
+                
                 resolve(result);
             });
         });
