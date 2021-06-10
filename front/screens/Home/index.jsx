@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { getNextDayNoWeekend } from '../../../helpers/date';
 import ResetDb from '../../components/Buttons/ResetDb';
+import SupportList from '../../components/SupportList';
+import WorkersList from '../../components/WorkersList';
 
 let today = getNextDayNoWeekend(moment().format("YYYY-MM-DD"));
 
@@ -140,54 +142,9 @@ const Home = () => {
                 <ResetDb stateHandler={resetDbHandler} />
             </div>
 
-            <section className="workers-list-wrap">
-                {workers ? 
-                    <ul className="workers-list">
-                        {workers.map((item, i) => {
-                            return(
-                                <li key={i} className={item.available == 1 ? 'green' : 'red'}>
-                                    {item.name} 
-                                    <span className="total-shifts">{item.totalShifts}</span>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                : (
-                    <div className="">No Heros for Support Shifts</div>
-                )}
-            </section>
-
-            <section className="saved-list">
-                {!supportList.length ? 'Press the "Random Pick" then "Save"' :
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Support Day</th>
-                                <th>Name</th>
-                                <th>Next Availability</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {supportList.map((item, i) => {
-                                return(
-                                    <tr key={i}>
-                                        <td>
-                                            <div 
-                                                className="pair-row"
-                                                data-id={item.worker_id}
-                                            >
-                                                {item.support_day}
-                                            </div>
-                                        </td>
-                                        <td>{item.name}</td>
-                                        <td>{item.available_on}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                }
-            </section>
+            <WorkersList data={workers} />
+            
+            <SupportList data={supportList} />
         </>
     );
 }
