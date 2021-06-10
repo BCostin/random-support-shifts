@@ -49,14 +49,9 @@ const Home = () => {
     }
 
     const randomPickStateHandler = (data, workers, canSave) => {
-        if (data)
-            setRandomPicks(data);
-        
-        if (workers)
-            setWorkers(workers);
-        
-        if (canSave)
-            setCanSave(canSave);
+        if (data) setRandomPicks(data);
+        if (workers) setWorkers(workers);
+        if (canSave != undefined) setCanSave(canSave);
     }
 
     const saveRandomWorkers = () => {
@@ -107,6 +102,7 @@ const Home = () => {
 
                 <PickRandom 
                     workers={workers} 
+                    supportDay={supportDay}
                     stateHandler={randomPickStateHandler}
                 />
 
