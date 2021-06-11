@@ -17,7 +17,16 @@ let PickRandom = (props) => {
 
         let random = await randomPick(workers);
         if (!random || !random.length) {
-            await updateAvailability();
+            let startNewSupportPeriod = await updateAvailability();
+
+            // So, if we enter here, it means we start a new **2 Weeks Support Period**
+            // and we visually show that by setting their shifts to 0
+            // but still respecting business rules not allowing consecutive support days
+            let workers = startNewSupportPeriod?.workers;
+            if (workers) {
+                stateHandler(null, workers);
+            }
+
             await randomPick(workers);
         }
         
@@ -67,10 +76,6 @@ let PickRandom = (props) => {
         }
         
         return fetch(updateShiftsEndpoint, params).then(r => r.json()).then(({ data }) => {
-            if (data && data.workers) {
-                stateHandler(null, data.workers);
-            }
-            
             return data;
 
         }).catch(err => {
