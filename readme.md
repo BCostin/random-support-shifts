@@ -1,7 +1,9 @@
-## Install (remove previous clones)
+## Install
+Make sure you remove previous clones to avoid strange things
+
 git clone https://github.com/BCostin/random-support-shifts.git
 
-## Run (copy + paste)
+## Run
 yarn install && yarn start 
 
 or 
