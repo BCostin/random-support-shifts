@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { getNextDayNoWeekend } from '../../../helpers/date';
+import { getNextDayNoWeekend, getToday } from '../../../helpers/date';
 import ResetDb from '../../components/Buttons/ResetDb';
 import SupportList from '../../components/SupportList';
 import WorkersList from '../../components/WorkersList';
 import PickRandom from '../../components/Buttons/PickRandom';
+import SupportPeriod from '../../components/SupportPeriod';
 
-let today = getNextDayNoWeekend(moment().format("YYYY-MM-DD"));
+let today = getToday;
 
 const Home = () => {
     const [workers, setWorkers] = useState([]);
@@ -117,6 +118,7 @@ const Home = () => {
                 </button>
 
                 <ResetDb stateHandler={resetDbHandler} />
+                <SupportPeriod data={supportList} />
             </div>
 
             <WorkersList data={workers} />

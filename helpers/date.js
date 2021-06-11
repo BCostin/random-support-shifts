@@ -1,8 +1,6 @@
 import moment from 'moment';
 import momentBiz from 'moment-business-days';
 
-export const getToday = moment().format('YYYY-MM-DD');
-
 export const getNextDayNoWeekend = (day, jumpDays) => {
     if (!jumpDays) jumpDays = 0;
     let nextDay = moment(day).add(jumpDays, 'days').format('YYYY-MM-DD');
@@ -34,3 +32,5 @@ export const addBizDays = (date, jump) => {
 export const subBizDays = (date, jump) => {
     return momentBiz(date).businessSubtract(jump).format('YYYY-MM-DD');
 }
+
+export const getToday = getNextDayNoWeekend(moment().format('YYYY-MM-DD'));

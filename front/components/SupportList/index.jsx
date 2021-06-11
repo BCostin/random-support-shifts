@@ -1,29 +1,8 @@
 import React from 'react';
+import { formatSupportList } from '../../../helpers/supportList';
 
 let SupportList = (props) => {
-    const formatList = (data) => {
-        if (!data) return [];
-        let format = [];
-        let dates = {};
-        data.forEach(item => {
-            if (!dates[item.support_day]) {
-                dates[item.support_day] = item.name;
-            } else {
-                dates[item.support_day] += ` + ${item.name}`;
-            }
-        })
-        
-        if (dates) {
-            let keys = Object.keys(dates);
-            for (let k in keys) {
-                format.push({ day: keys[k], names: dates[keys[k]]});
-            }
-
-        }
-        return format;
-    }
-
-    const supportList = formatList(props.data);
+    const supportList = formatSupportList(props.data);
 
     return(
         <section className="saved-list">
