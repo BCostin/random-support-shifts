@@ -13,6 +13,8 @@ const app = express();
 const port = process.env.PORT;
 const host = process.env.HOST;
 
+initDatabase();
+
 app.use(express.json());
 
 // Main route
