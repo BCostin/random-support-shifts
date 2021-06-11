@@ -1,4 +1,4 @@
-## Install (do remove previous cloned folder, always go with fresh clone)
+###### Install (do remove previous cloned folder, always go with fresh clone)
 git clone https://github.com/BCostin/random-support-shifts.git
 
 ## Run (copy + paste)
@@ -9,11 +9,11 @@ or
 npm install && npm run start
 
 ## Usage
-Step 1 - Press Random Pick button (just displays next 2 humans but does not save them)
-Step 2 - Press Save for {support-date} button 
+*Step 1 - Press Random Pick button (just displays next 2 humans but does not save them)
+*Step 2 - Press Save for {support-date} button 
 
-Optional
-Step 3  - Press Reset Db button to start all over again with a fresh database.
+*Optional
+*Step 3  - Press Reset Db button to start all over again with a fresh database.
 
 Current Support Period is displayed near 'Reset Db' button
     - 1 Support Period == 2 weeks
