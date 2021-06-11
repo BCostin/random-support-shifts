@@ -17,7 +17,6 @@ const Home = () => {
     const [canSave, setCanSave] = useState(false);
 
     const allEndpoint = `${process.env.API_ENDPOINT}/engineers`;
-    const randomEndpoint = `${process.env.API_ENDPOINT}/random`;
     const saveEndpoint = `${process.env.API_ENDPOINT}/save`;
 
     useEffect(() => {
