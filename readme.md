@@ -15,6 +15,7 @@ npm install && npm run start
 * Step 3 Optional
     * Press Reset Db button to reset the database.
 
+## Other
 * Current Support Period is displayed near 'Reset Db' button
     * 1 Support Period == 2 weeks
 
