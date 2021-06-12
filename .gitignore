@@ -1,4 +1,4 @@
-/support.db
+/api/db/support.db
 
 /yarn.lock
 /yarn-error.log
