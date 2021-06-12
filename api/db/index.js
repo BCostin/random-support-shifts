@@ -1,8 +1,9 @@
+import path from 'path';
 import sqlite3 from 'sqlite3';
 import { engineers } from '../data/engineers';
 
 const sqlite = sqlite3.verbose();
-const DB_FILE = './support.db';
+const DB_FILE = path.resolve('./api/db/support.db');
 
 export const DB = new sqlite.Database(DB_FILE);
 
